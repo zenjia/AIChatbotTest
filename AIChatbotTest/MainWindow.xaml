@@ -1,0 +1,363 @@
+﻿<Window x:Class="AiTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AiTest"
+        xmlns:view="clr-namespace:AiTest.View;assembly=ViewLibrary"
+        mc:Ignorable="d"
+        x:Name="root"
+
+        WindowState="Maximized"
+        Title="{Binding ElementName=root, Path=TestPlan.TestPlanFileName}" 
+        Height="720" Width="1500">
+    <Window.Resources>
+
+
+    </Window.Resources>
+
+    <Grid DataContext="{Binding ElementName=root}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="34"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal" 
+                        VerticalAlignment="Center">
+                <StackPanel.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="FontSize" Value="17"/>
+                        <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+                        <Setter Property="Padding" Value="7,5"/>
+                        <Setter Property="Grid.Column" Value="2"/>
+                        <Setter Property="Margin" Value="1"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                    </Style>
+                </StackPanel.Resources>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="&#xE160;" 
+                            ToolTip="新建"
+                            Click="BtnNewTestPlan_OnClick"/>
+                    <Button ToolTip="调入" 
+                            Content="&#xED43;" 
+                            Click="BtnLoadTestPlan_OnClick"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal"
+                            Margin="6,0,0,0"
+                            Visibility="{Binding TestPlan, Converter={StaticResource NullToCollapsedConverter}}">
+                    <Button Content="&#xE105;" ToolTip="保存" Click="BtnSaveTestPlan_OnClick"/>
+                    <Button Content="&#xE159;" ToolTip="另存为" Click="BtnSaveTestPlanAs_OnClick"/>
+
+
+                </StackPanel>
+
+                <Button  Margin="6,0,0,0" 
+                         Content="&#xE107;" 
+                         ToolTip="清空" 
+                         Visibility="{Binding TestPlan, Converter={StaticResource NullToCollapsedConverter}}" 
+                         Click="BtnClearTestData_OnClick"/>
+
+
+                <StackPanel Orientation="Horizontal" 
+                            Margin="6,0,0,0"
+                            Visibility="{Binding TestPlan, Converter={StaticResource NullToCollapsedConverter}}">
+                    <Button ToolTip="开始"
+                            Content="&#xEDDA;"
+                            Foreground="{Binding CanBegin, Converter={StaticResource IsEnabledToBrushConverter}, ConverterParameter={x:Static Brushes.Green}}"
+                            Click="Begin_OnClick"
+                            IsEnabled="{Binding CanBegin}"/>
+                    <Button ToolTip="取消" 
+                            Content="&#xF16E;"
+                            Foreground="{Binding CanCancel, Converter={StaticResource IsEnabledToBrushConverter}, ConverterParameter={x:Static Brushes.Red}}"
+                            IsEnabled="{Binding CanCancel}"
+                            Click="Cancel_OnClick"/>
+                </StackPanel>
+
+
+                <Button ToolTip="导出数据" 
+                        Content="&#x1F4C9;"
+                        Margin="6,0,0,0"
+                        FontFamily="Segoe UI Symbol"
+                        Click="ButtonBase_OnClick"
+                        Visibility="{Binding TestPlan, Converter={StaticResource NullToCollapsedConverter}}">
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="复制测试时间" Click="NCopyTestTime_OnClick"/>
+                            <Separator/>
+                            <MenuItem Header="一键生成报告数据" Click="NCreateReportData_OnClick"/>
+                           
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+
+                <Button ToolTip="转到文件夹" 
+                        Margin="6,0,0,0"
+                        Content="&#xE269;"
+                        FontSize="17"
+                        FontFamily="Segoe UI Symbol"
+                        Click="btnOpenFolder_OnClick"
+                        Visibility="{Binding TestPlan, Converter={StaticResource NullToCollapsedConverter}}">
+                </Button>
+
+                <StackPanel Orientation="Horizontal" Margin="20,0" 
+                            VerticalAlignment="Center">
+                    <TextBlock Text="延迟时间(分钟)："
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding StartDelay, Mode=TwoWay}" 
+                             Width="60"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" 
+                        Visibility="{Binding TestPlan, Converter={StaticResource NullToCollapsedConverter}}"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+
+                <TextBlock Width="80" 
+                           Foreground="Gray"
+                           FontStyle="Italic" 
+                           Text="{Binding TimeElapsed, Mode=OneWay}"/>
+
+                <TextBlock Width="150">
+                     <Run Text="并发数：" FontWeight="Black"/>
+                     <Run Text="{Binding TestPlan.WechatAppThreadGroup.ActiveCount, Mode=OneWay}"
+                          Foreground="RoyalBlue"/>
+                     <Run Text="/"/>
+                     <Run Text="{Binding TestPlan.WechatAppThreadGroup.Config.ThreadCount, Mode=OneWay}"/>
+                </TextBlock>
+
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1" 
+              Visibility="{Binding TestPlan, Converter={StaticResource NullToCollapsedConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+                <RowDefinition Height="5"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" 
+                BorderBrush="DarkGray" 
+                BorderThickness="1.5"
+                Margin="9">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Margin="9"
+                            IsEnabled="{Binding CanBegin}"
+                            Background="LightGray"
+                            CornerRadius="4"
+                            Padding="6,9">
+                        <StackPanel>
+                            <StackPanel.Resources>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Grid.Column" Value="1"/>
+                                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                    <Setter Property="Margin" Value="5"/>
+                                </Style>
+
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                </Style>
+                            </StackPanel.Resources>
+ 
+                            <Grid Width="700" HorizontalAlignment="Left"
+                                  DataContext="{Binding TestPlan.WechatAppThreadGroup.Config}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200"/>
+                                    <ColumnDefinition Width="200"/>
+                                    <ColumnDefinition Width="300"/>
+                                </Grid.ColumnDefinitions>
+
+
+                                <TextBlock Grid.Row="0" Text="线程数（用户数）："/>
+                                <TextBox Grid.Row="0" Text="{Binding ThreadCount, Mode=TwoWay}"/>
+
+                                <TextBlock Grid.Row="1" Text="线程启动间隔（毫秒）："/>
+                                <TextBox Grid.Row="1" Text="{Binding RampUpDelay, Mode=TwoWay}"/>
+
+                                <TextBlock Grid.Row="2" Text="聊天循环轮数："/>
+                                <TextBox Grid.Row="2" Text="{Binding ChatRoundCount, Mode=TwoWay}"/>
+
+                                <TextBlock Grid.Row="3" Text="聊天消息发送间隔（毫秒）："/>
+                                <TextBox Grid.Row="3" Text="{Binding ChatDelay, Mode=TwoWay}"/>
+
+                                <TextBlock Grid.Row="4" Text="Read Timeout(毫秒)："/>
+                                <TextBox Grid.Row="4" Text="{Binding ReadTimeOut, Mode=TwoWay}"/>
+
+                                <TextBlock Grid.Row="5" Text="用户数据文件："/>
+                                <Grid Grid.Row="5" 
+                                      Grid.Column="1" 
+                                      Grid.ColumnSpan="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="35"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBox Grid.Column="0" 
+                                             Text="{Binding UserDataFileName, Mode=OneWay}"/>
+                                    <Button Grid.Column="1"  
+                                            HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"
+                                            BorderThickness="0"
+                                            Padding="5"
+                                            FontSize="17"
+                                            FontFamily="Segoe MDL2 Assets"
+                                            Content="&#xED25;"
+                                            Click="BtnSelectUserDataFile_OnClick"/>
+                                </Grid>
+                            </Grid>
+ 
+                           
+                        </StackPanel>
+
+                    </Border>
+
+                    <ListView Grid.Column="1" 
+                              BorderThickness="0"
+                              Margin="1"
+                              ItemsSource="{Binding TestPlan.WechatAppThreadGroup.SampleResults.SampleResultStats}">
+
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Label" 
+                                                DisplayMemberBinding="{Binding Label}"
+                                                Width="150"/>
+
+                                <GridViewColumn Header="样本数" 
+                                                Width="90">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding SampleCount}" 
+                                                       HorizontalAlignment="Right"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="平均值" 
+                                                Width="80">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding AverageResponseTime, StringFormat={}{0:F0}}" 
+                                                       HorizontalAlignment="Right"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="最小值" 
+                                             
+                                                Width="80">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding MinResponseTime, StringFormat={}{0:F0}}" 
+                                                       HorizontalAlignment="Right"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="最大值" 
+                                               
+                                                Width="80">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding MaxResponseTime, StringFormat={}{0:F0}}" 
+                                                       HorizontalAlignment="Right"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Header="Error" 
+                                                
+                                                Width="80">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding ErrorCount}" 
+                                                       HorizontalAlignment="Right"
+                                                       ToolTip="点击查看详细信息"
+                                                       MouseLeftButtonDown="UIElement_OnMouseLeftButtonDown"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+
+                    </ListView>
+
+                </Grid>
+
+            </Border>
+
+            <view:SampleResultView Grid.Row="1" 
+                               Margin="9" 
+                               ItemsSource="{Binding ElementName=root, Path=TestPlan.WechatAppThreadGroup.SampleResults.Items}"/>
+
+            <GridSplitter Grid.Row="2" 
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"
+                      Height="5"/>
+
+            <Grid Grid.Row="3" 
+                  Margin="9">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="日志：" 
+                               VerticalAlignment="Center"
+                               FontWeight="Bold"/>
+
+                    <StackPanel Grid.Column="1"  
+                                Margin="50,0,0,0"
+                                Orientation="Horizontal">
+                        <TextBlock Text="LogLevel："
+                                 VerticalAlignment="Center"/>
+                        <ComboBox 
+                                  Width="120"
+                                  HorizontalAlignment="Right"
+                                  Margin="1"
+                                  ItemsSource="{Binding ElementName=root, Path=LogTypes}"
+                                  SelectedItem="{Binding ElementName=root, Path=TestPlan.Log.LogLevel, Mode=TwoWay}"
+                        />
+                    </StackPanel>
+
+                </Grid>
+                <view:LogView Grid.Row="1" 
+                              ItemsSource="{Binding ElementName=root, Path=TestPlan.Log.Items}"/>
+            </Grid>
+
+
+
+
+        </Grid>
+    </Grid>
+
+</Window>

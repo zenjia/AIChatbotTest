@@ -1,0 +1,77 @@
+﻿<Window x:Class="ViewLibrary.View.CreateReportDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ViewLibrary.View"
+        mc:Ignorable="d"
+        x:Name="root"
+        WindowStyle="SingleBorderWindow"
+        Title="生成报告数据选项" Height="250" Width="500">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Margin="9" Header="设置">
+            <Grid DataContext="{Binding ElementName=root, Path=ReportCreatingOptions}"
+          Margin="6"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="220"/>
+                    <ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" 
+                   VerticalAlignment="Center"
+                   Margin="6,0,1,0" 
+                   HorizontalAlignment="Right"
+                   Text="走势图数据统计间隔（毫秒）："
+                   FontWeight="Bold"/>
+                <TextBox Grid.Row="0" 
+                 Grid.Column="1"
+                 VerticalAlignment="Center"
+                 Text="{Binding TimeSeriesStepInMilliseconds, Mode=TwoWay}"/>
+
+                <TextBlock Grid.Row="1" Margin="6,0,1,0" 
+                   Text="响应时间分布统计间隔（毫秒）："
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"
+                   FontWeight="Bold"/>
+                <TextBox Grid.Row="1" 
+                 Grid.Column="1"
+                 VerticalAlignment="Center"
+                 Text="{Binding RtdDataStepInMilliseconds, Mode=TwoWay}"/>
+
+                <CheckBox Grid.Row="2"  
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Grid.ColumnSpan="2"
+                  Content="只统计最高并发阶段"
+                  IsChecked="{Binding OnlyIncludeMaxThreadCountSamples, Mode=TwoWay}"/>
+ 
+
+            </Grid>
+
+        </GroupBox>
+
+        <WrapPanel Grid.Row="1" 
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Right" 
+                   Margin="0,0,6,0">
+            <Button IsDefault="True" 
+                    Click="btnDialogOk_Click" 
+                    MinWidth="60" 
+                    Margin="0,0,10,0">_Ok</Button>
+            <Button IsCancel="True" MinWidth="60">_Cancel</Button>
+        </WrapPanel>
+    </Grid>
+  
+</Window>

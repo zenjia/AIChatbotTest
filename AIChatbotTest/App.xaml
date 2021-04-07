@@ -1,0 +1,21 @@
+﻿<Application x:Class="AiTest.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:AiTest"
+             xmlns:converters="clr-namespace:AiTest.converters;assembly=ViewLibrary"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <converters:DebugConverter x:Key="DebugConverter"/>
+            <converters:TrueToVisibleConverter x:Key="TrueToVisibleConverter"/>
+            <converters:TrueToCollapsedConverter x:Key="TrueToCollapsedConverter"/>
+            <converters:NullToCollapsedConverter x:Key="NullToCollapsedConverter"/>
+            <converters:IsEnabledToBrushConverter x:Key="IsEnabledToBrushConverter"/>
+            <Style TargetType="ListViewItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            </Style>
+        </ResourceDictionary>
+
+
+    </Application.Resources>
+</Application>
